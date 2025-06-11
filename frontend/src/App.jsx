@@ -21,6 +21,9 @@ const StatusBadge = ({ isConnected, lastUpdate }) => (
         }`}></div>
         <span>📡</span>
         {isConnected ? 'LIVE' : 'OFFLINE'}
+        {isConnected && (
+          <span className="ml-1 text-xs text-green-300">Public API</span>
+        )}
       </div>
       <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
         <span>🕐</span>
@@ -35,10 +38,13 @@ const ContinuousScrollingBanner = ({ data }) => {
     <div className="overflow-hidden border shadow-xl bg-gradient-to-r from-gray-900/80 via-gray-800/60 to-gray-900/80 backdrop-blur-xl rounded-2xl border-gray-700/50 shadow-black/10">
       <div className="px-6 py-4 border-b bg-gray-800/40 border-gray-700/50">
         <div className="flex items-center gap-3">
-          <span className="text-xl">📊</span>
+          <span className="text-xl">🔥</span>
           <h3 className="text-base font-bold tracking-wide text-white uppercase">
-            1H Volume Surge Alert • Live Feed
+            Volume Surge Alert • Live Market Feed
           </h3>
+          <div className="px-2 py-1 text-xs font-bold text-blue-300 bg-blue-500/20 border border-blue-500/30 rounded-full">
+            No API Key Required
+          </div>
         </div>
       </div>
       <div className="relative h-16 overflow-hidden">
@@ -308,14 +314,13 @@ export default function App() {
           <ContinuousScrollingBanner data={bannerData} />
         </section>
 
-        {/* Footer */}
         <footer className="py-10 mt-16 text-center border-t border-gray-700/50">
           <div className="space-y-3">
             <p className="text-sm font-medium text-gray-400">
-              Powered by <span className="font-semibold text-blue-400">Coinbase Exchange API</span> • Real-time WebSocket Updates
+              Powered by <span className="font-semibold text-blue-400">Public Coinbase API</span> • Real-time WebSocket Updates • No Authentication Required
             </p>
             <p className="text-xs text-gray-500">
-              Data updates every 30 seconds • This is not financial advice • Trade responsibly
+              Data updates every 60 seconds • Volume surge detection via price volatility correlation • This is not financial advice
             </p>
           </div>
         </footer>
