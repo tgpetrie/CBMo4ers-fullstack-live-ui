@@ -286,9 +286,7 @@ export default function App() {
             <div>
               <h1 className="text-3xl font-bold tracking-wide text-white animate-fade-in-up">
                 CBMO4ERS
-                <span className="ml-3 text-[#FF5E00] font-bold animate-glow-pulse" style={{
-                  filter: 'drop-shadow(0 4px 8px rgba(156, 51, 145, 0.6)) drop-shadow(0 0 12px rgba(156, 51, 145, 0.4))'
-                }}>
+                <span className="ml-3 text-[#FF5E00] font-bold animate-text-glow-pulse">
                   BHABITS CB INSIGHT
                 </span>
               </h1>
