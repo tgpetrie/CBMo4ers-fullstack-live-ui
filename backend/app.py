@@ -383,7 +383,7 @@ def get_crypto_data():
         print(f"Error in get_crypto_data: {e}")
         return None
 
-@app.route('/banner-1h')
+@app.route('/api/banner-1h')
 def banner_1h():
     """Separate endpoint for 1-hour volume-weighted data for the scrolling banner"""
     banner_data = get_1h_volume_weighted_data()
@@ -400,7 +400,7 @@ def banner_1h():
     formatted_data = format_banner_data(banner_data)
     return jsonify(formatted_data)
 
-@app.route('/crypto')
+@app.route('/api/crypto')
 def get_crypto():
     """REST API endpoint for crypto data"""
     data = get_crypto_data()
@@ -408,6 +408,15 @@ def get_crypto():
         return jsonify(data)
     else:
         return jsonify({"error": "Failed to fetch crypto data"}), 500
+
+# Keep original routes for backward compatibility
+@app.route('/banner-1h')
+def banner_1h_legacy():
+    return banner_1h()
+
+@app.route('/crypto')
+def get_crypto_legacy():
+    return get_crypto()
 
 @socketio.on('connect')
 def handle_connect():
@@ -434,10 +443,18 @@ def background_crypto_updates():
         
         time.sleep(60)  # Update every 60 seconds (1 minute)
 
+# For Vercel deployment
+app_instance = app
+
 if __name__ == '__main__':
-    # Start background thread for periodic updates
+    # Start background thread for periodic updates (local development only)
     background_thread = threading.Thread(target=background_crypto_updates)
     background_thread.daemon = True
     background_thread.start()
     
     socketio.run(app, debug=True, host='0.0.0.0', port=5001)
+else:
+    # Production mode for Vercel
+    # Note: WebSocket background updates won't work in serverless
+    # Consider using Vercel cron jobs or client-side polling for production
+    pass

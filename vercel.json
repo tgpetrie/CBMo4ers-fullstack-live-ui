@@ -1,0 +1,38 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "backend/app.py",
+            "use": "@vercel/python",
+            "config": {
+                "runtime": "python3.9"
+            }
+        },
+        {
+            "src": "frontend/package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "dist"
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "backend/app.py"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "frontend/dist/$1"
+        }
+    ],
+    "env": {
+        "PYTHON_VERSION": "3.9"
+    },
+    "functions": {
+        "backend/app.py": {
+            "runtime": "@vercel/python",
+            "maxDuration": 30
+        }
+    }
+}

@@ -246,8 +246,11 @@ export default function App() {
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
   useEffect(() => {
+    // Determine API URL based on environment
+    const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    
     // Initialize WebSocket connection
-    const socket = io(import.meta.env.VITE_API_URL);
+    const socket = io(apiUrl);
 
     socket.on('connect', () => {
       console.log('Connected to WebSocket');
