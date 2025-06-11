@@ -34,12 +34,12 @@ const ContinuousScrollingBanner = ({ data }) => {
   return (
     <div className="overflow-hidden border shadow-2xl bg-gradient-to-r from-gray-950/95 via-black/90 to-gray-950/95 backdrop-blur-3xl rounded-3xl border-gray-800/60 shadow-black/80 hover:shadow-[#9C3391]/40 hover:shadow-2xl transition-all duration-500 relative group">
       {/* Glossy overlay effect */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/20 rounded-3xl pointer-events-none"></div>
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/5 via-transparent to-black/20 rounded-3xl"></div>
       
       <div className="relative px-6 py-4 border-b bg-gradient-to-r from-gray-900/40 via-black/30 to-gray-900/40 border-gray-800/60 backdrop-blur-xl">
         <div className="flex items-center gap-3">
           <span className="text-xl">🔥</span>
-          <h3 className="text-base font-bold tracking-wide text-gray-200/90 uppercase">
+          <h3 className="text-base font-bold tracking-wide uppercase text-gray-200/90">
             Volume Surge Alert • Live Market Feed
           </h3>
         </div>
@@ -55,7 +55,7 @@ const ContinuousScrollingBanner = ({ data }) => {
                   target="_blank"
                   className="flex items-center gap-4 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#9C3391]/40 hover:drop-shadow-lg rounded-lg px-3 py-2 hover:bg-gray-900/40 backdrop-blur-xl"
                 >
-                  <div className="text-sm font-bold text-gray-300/90 tracking-wide">
+                  <div className="text-sm font-bold tracking-wide text-gray-300/90">
                     {coin.symbol}
                   </div>
                   <div className="font-mono text-sm text-gray-100/95">
@@ -83,7 +83,7 @@ const ContinuousScrollingBanner = ({ data }) => {
                   target="_blank"
                   className="flex items-center gap-4 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#9C3391]/40 hover:drop-shadow-lg rounded-lg px-3 py-2 hover:bg-gray-900/40 backdrop-blur-xl"
                 >
-                  <div className="text-sm font-bold text-gray-300/90 tracking-wide">
+                  <div className="text-sm font-bold tracking-wide text-gray-300/90">
                     {coin.symbol}
                   </div>
                   <div className="font-mono text-sm text-gray-100/95">
@@ -147,7 +147,7 @@ const CryptoRow = ({ coin, index }) => (
 const CryptoTable = ({ title, data, variant = "default" }) => (
   <div className="overflow-hidden border shadow-2xl bg-gradient-to-br from-gray-950/90 via-black/95 to-gray-950/90 backdrop-blur-3xl rounded-3xl border-gray-800/50 shadow-black/70 hover:shadow-[#9C3391]/50 hover:shadow-2xl transition-all duration-500 relative group">
     {/* Glossy overlay effect */}
-    <div className="absolute inset-0 bg-gradient-to-b from-white/3 via-transparent to-black/30 rounded-3xl pointer-events-none"></div>
+    <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/3 via-transparent to-black/30 rounded-3xl"></div>
     
     <div className={`relative px-6 py-5 border-b border-gray-800/40 backdrop-blur-xl ${
       variant === "gainers" ? "bg-gradient-to-r from-[#FF3F7F]/15 via-black/30 to-transparent" : 
@@ -159,7 +159,7 @@ const CryptoTable = ({ title, data, variant = "default" }) => (
           {variant === "losers" && '📉'}
         </span>
         <div>
-          <h2 className="text-xl font-bold text-gray-200/95 tracking-wide uppercase">{title}</h2>
+          <h2 className="text-xl font-bold tracking-wide uppercase text-gray-200/95">{title}</h2>
           <p className="text-sm text-gray-400/80 mt-0.5 tracking-wide">3-MINUTE PERFORMANCE RANKINGS</p>
         </div>
       </div>
@@ -169,13 +169,13 @@ const CryptoTable = ({ title, data, variant = "default" }) => (
       <table className="w-full">
         <thead className="bg-gray-950/60 backdrop-blur-xl">
           <tr>
-            <th className="py-4 pl-6 pr-4 text-xs font-bold tracking-wider text-left text-gray-400/90 uppercase">
+            <th className="py-4 pl-6 pr-4 text-xs font-bold tracking-wider text-left uppercase text-gray-400/90">
               Asset
             </th>
-            <th className="px-4 py-4 text-xs font-bold tracking-wider text-right text-gray-400/90 uppercase">
+            <th className="px-4 py-4 text-xs font-bold tracking-wider text-right uppercase text-gray-400/90">
               Price
             </th>
-            <th className="py-4 pl-4 pr-6 text-xs font-bold tracking-wider text-right text-gray-400/90 uppercase">
+            <th className="py-4 pl-4 pr-6 text-xs font-bold tracking-wider text-right uppercase text-gray-400/90">
               3min Change
             </th>
           </tr>
@@ -193,12 +193,12 @@ const CryptoTable = ({ title, data, variant = "default" }) => (
 const TopMoversBar = ({ data }) => (
   <div className="overflow-hidden border shadow-2xl bg-gradient-to-r from-gray-950/95 via-black/90 to-gray-950/95 backdrop-blur-3xl rounded-3xl border-gray-800/60 shadow-black/80 hover:shadow-[#9C3391]/40 hover:shadow-2xl transition-all duration-500 relative group">
     {/* Glossy overlay effect */}
-    <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/20 rounded-3xl pointer-events-none"></div>
+    <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/5 via-transparent to-black/20 rounded-3xl"></div>
     
     <div className="relative px-6 py-4 border-b bg-gradient-to-r from-gray-900/40 via-black/30 to-gray-900/40 border-gray-800/60 backdrop-blur-xl">
       <div className="flex items-center gap-3">
         <span className="text-xl">🌐</span>
-        <h3 className="text-base font-bold tracking-wide text-gray-200/90 uppercase">
+        <h3 className="text-base font-bold tracking-wide uppercase text-gray-200/90">
           Most Active 3min
         </h3>
       </div>
@@ -218,7 +218,7 @@ const TopMoversBar = ({ data }) => (
                 : 'bg-gray-900/40 border-gray-700/50 hover:bg-gray-800/50 shadow-[#FF3B30]/15 hover:shadow-[#9C3391]/30'
             }`}>
               {/* Inner glossy effect */}
-              <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-black/20 rounded-2xl pointer-events-none"></div>
+              <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/5 via-transparent to-black/20 rounded-2xl"></div>
               
               <div className="relative mb-2 text-xs font-bold tracking-wide text-gray-300/90">
                 {coin.symbol}
@@ -286,7 +286,10 @@ export default function App() {
             <div>
               <h1 className="text-3xl font-bold tracking-wide text-white animate-fade-in-up">
                 CBMO4ERS
-                <span className="ml-3 text-[#FF5E00] font-bold animate-text-glow-pulse">
+                <span className="ml-3 text-[#FF5E00] font-bold" style={{
+                  textShadow: '0 0 10px rgba(255, 94, 0, 0.8), 0 0 20px rgba(255, 94, 0, 0.6)',
+                  filter: 'drop-shadow(0 4px 8px rgba(156, 51, 145, 0.6))'
+                }}>
                   BHABITS CB INSIGHT
                 </span>
               </h1>
@@ -324,8 +327,8 @@ export default function App() {
         </section>
 
         <footer className="py-12 mt-20 text-center border-t border-gray-800/50 backdrop-blur-xl">
-          <div className="mx-auto max-w-4xl">
-            <p className="text-sm font-medium text-gray-400/90 tracking-wider uppercase">
+          <div className="max-w-4xl mx-auto">
+            <p className="text-sm font-medium tracking-wider uppercase text-gray-400/90">
               Copyright 2025 GUISAN DESIGN - TOM PETRIE - BHABIT
             </p>
           </div>
