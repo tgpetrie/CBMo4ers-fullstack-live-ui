@@ -1,19 +1,34 @@
+import eventlet
+# Ensure monkey patching is done before other imports
+eventlet.monkey_patch()
+
+import eventlet.hubs
+# Force eventlet to use the poll hub instead of kqueue (macOS compatibility issue)
+eventlet.hubs.use_hub('poll')
+
 from flask import Flask, jsonify
-from flask_cors import CORS
 from flask_socketio import SocketIO, emit
+from flask_cors import CORS
 import requests
 import time
 import threading
 from collections import defaultdict, deque
+import logging
 
 # CBMo4ers Crypto Dashboard Backend
 # Data Sources: Public Coinbase Exchange API + CoinGecko (backup)
 # No API keys required - uses public market data only
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 app = Flask(__name__)
+app.app_context().push()  # Ensure application context is set
 app.config['SECRET_KEY'] = 'crypto-dashboard-secret'
-CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+# Enable CORS for the Flask app
+CORS(app)
 
 # Cache and price history storage
 cache = {
@@ -33,40 +48,22 @@ def get_current_prices():
         # Primary: Try Coinbase first
         return get_coinbase_prices()
     except Exception as e:
-        print(f"Coinbase API failed: {e}, trying CoinGecko backup...")
+        logging.error(f"Coinbase API failed: {e}, trying CoinGecko backup...")
         return get_coingecko_prices()
 
 def get_coinbase_prices():
     """Fetch current prices from Coinbase"""
     try:
-        # Get current ticker data for all products
-        url = "https://api.exchange.coinbase.com/products"
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            products = response.json()
-            # Filter for USD pairs only
-            usd_products = [p for p in products if p["quote_currency"] == "USD" and p["status"] == "online"]
-            
-            current_prices = {}
-            # Get current price for each product
-            for product in usd_products[:50]:  # Limit to avoid rate limits
-                try:
-                    ticker_url = f"https://api.exchange.coinbase.com/products/{product['id']}/ticker"
-                    ticker_response = requests.get(ticker_url, timeout=3)
-                    if ticker_response.status_code == 200:
-                        ticker_data = ticker_response.json()
-                        current_prices[product['id']] = float(ticker_data.get('price', 0))
-                    time.sleep(0.05)  # Small delay
-                except Exception as e:
-                    print(f"Error fetching ticker for {product['id']}: {e}")
-                    continue
-                    
-            return current_prices
+        products_url = "https://api.exchange.coinbase.com/products"
+        products_response = requests.get(products_url, timeout=10)
+        if products_response.status_code == 200:
+            products = products_response.json()
+            return products
         else:
-            print(f"Products API Error: {response.status_code}")
+            logging.error(f"Products API Error: {products_response.status_code}")
             return {}
     except Exception as e:
-        print(f"Error fetching current prices from Coinbase: {e}")
+        logging.error(f"Error fetching current prices from Coinbase: {e}")
         return {}
 
 def get_coingecko_prices():
@@ -93,13 +90,13 @@ def get_coingecko_prices():
                 symbol = f"{coin['symbol'].upper()}-USD"
                 current_prices[symbol] = float(coin['current_price'])
             
-            print(f"Successfully fetched {len(current_prices)} prices from CoinGecko backup")
+            logging.info(f"Successfully fetched {len(current_prices)} prices from CoinGecko backup")
             return current_prices
         else:
-            print(f"CoinGecko API Error: {response.status_code}")
+            logging.error(f"CoinGecko API Error: {response.status_code}")
             return {}
     except Exception as e:
-        print(f"Error fetching prices from CoinGecko: {e}")
+        logging.error(f"Error fetching prices from CoinGecko: {e}")
         return {}
 
 def get_1h_volume_weighted_data():
@@ -108,91 +105,87 @@ def get_1h_volume_weighted_data():
         # Primary: Try public Coinbase Exchange API
         return get_coinbase_1h_data()
     except Exception as e:
-        print(f"Coinbase public API failed: {e}, trying CoinGecko backup...")
+        logging.error(f"Coinbase public API failed: {e}, trying CoinGecko backup...")
         return get_coingecko_1h_data()
 
-def get_coinbase_1h_data():
-    """Fetch 1-hour volume change data using public Coinbase API with 24h stats"""
+def fetch_product_stats(product_id):
+    """Fetch 24h stats and ticker data for a product."""
     try:
-        # Get product list first
+        product_stats_url = f"https://api.exchange.coinbase.com/products/{product_id}/stats"
+        stats_response = requests.get(product_stats_url, timeout=5)
+        if stats_response.status_code != 200:
+            return None
+        stats_data = stats_response.json()
+
+        ticker_url = f"https://api.exchange.coinbase.com/products/{product_id}/ticker"
+        ticker_response = requests.get(ticker_url, timeout=3)
+        if ticker_response.status_code != 200:
+            return None
+        ticker_data = ticker_response.json()
+
+        return stats_data, ticker_data
+    except Exception as e:
+        logging.warning(f"Error fetching stats for {product_id}: {e}")
+        return None
+
+def process_product_data(product, stats_data, ticker_data):
+    """Process product data to calculate volume and price changes."""
+    try:
+        current_price = float(ticker_data.get('price', 0))
+        volume_24h = float(stats_data.get('volume', 0))
+        open_24h = float(stats_data.get('open', 0))
+
+        estimated_hourly_volume = volume_24h / 24
+        price_change_24h = ((current_price - open_24h) / open_24h) * 100 if open_24h > 0 else 0
+
+        volume_change_proxy = abs(price_change_24h) * 5
+        if price_change_24h > 2:
+            volume_change_proxy *= 1.5
+        elif price_change_24h < -2:
+            volume_change_proxy *= 1.3
+
+        volume_significance = volume_change_proxy * volume_24h
+
+        if volume_24h > 0:
+            return {
+                "symbol": product["id"],
+                "current_price": current_price,
+                "price_change_percentage_1h": price_change_24h,
+                "volume_1h": estimated_hourly_volume,
+                "volume_change_percentage": volume_change_proxy,
+                "volume_significance_score": volume_significance
+            }
+    except Exception as e:
+        logging.warning(f"Error processing product data: {e}")
+    return None
+
+def get_coinbase_1h_data():
+    """Fetch 1-hour volume change data using public Coinbase API with 24h stats."""
+    try:
         products_url = "https://api.exchange.coinbase.com/products"
         products_response = requests.get(products_url, timeout=10)
         if products_response.status_code != 200:
             return []
-        
+
         products = products_response.json()
         usd_products = [p for p in products if p["quote_currency"] == "USD" and p["status"] == "online"]
-        
+
         formatted_data = []
-        
-        for product in usd_products[:30]:  # Limit to avoid rate limits
-            try:
-                product_id = product["id"]
-                
-                # Get 24h stats for this product
-                product_stats_url = f"https://api.exchange.coinbase.com/products/{product_id}/stats"
-                stats_response = requests.get(product_stats_url, timeout=5)
-                if stats_response.status_code != 200:
-                    continue
-                    
-                stats_data = stats_response.json()
-                
-                # Get current ticker data
-                ticker_url = f"https://api.exchange.coinbase.com/products/{product_id}/ticker"
-                ticker_response = requests.get(ticker_url, timeout=3)
-                if ticker_response.status_code != 200:
-                    continue
-                    
-                ticker_data = ticker_response.json()
-                current_price = float(ticker_data.get('price', 0))
-                
-                # Extract volume and price data from stats
-                volume_24h = float(stats_data.get('volume', 0))
-                open_24h = float(stats_data.get('open', 0))
-                
-                # Estimate current hour volume (24h volume / 24)
-                # This is an approximation since we don't have hourly candles without Pro API
-                estimated_hourly_volume = volume_24h / 24
-                
-                # Calculate price change from 24h open
-                price_change_24h = ((current_price - open_24h) / open_24h) * 100 if open_24h > 0 else 0
-                
-                # Use price volatility as a proxy for volume change
-                # Higher price volatility often correlates with volume spikes
-                volume_change_proxy = abs(price_change_24h) * 5  # Scale factor for estimation
-                
-                # Add some randomness based on current price movement
-                if price_change_24h > 2:  # Strong upward movement
-                    volume_change_proxy *= 1.5
-                elif price_change_24h < -2:  # Strong downward movement
-                    volume_change_proxy *= 1.3
-                
-                # Volume significance score
-                volume_significance = volume_change_proxy * volume_24h
-                
-                if volume_24h > 0:
-                    formatted_data.append({
-                        "symbol": product_id,
-                        "current_price": current_price,
-                        "price_change_percentage_1h": price_change_24h,  # Using 24h as proxy
-                        "volume_1h": estimated_hourly_volume,
-                        "volume_change_percentage": volume_change_proxy,
-                        "volume_significance_score": volume_significance
-                    })
-                        
-                time.sleep(0.1)  # Small delay to avoid rate limits
-            except Exception as e:
-                print(f"Error processing stats for {product_id}: {e}")
-                continue
-        
-        # Sort by volume significance score (highest volume changes first)
+
+        for product in usd_products[:30]:
+            stats_data, ticker_data = fetch_product_stats(product["id"])
+            if stats_data and ticker_data:
+                product_data = process_product_data(product, stats_data, ticker_data)
+                if product_data:
+                    formatted_data.append(product_data)
+
+            time.sleep(0.1)
+
         formatted_data.sort(key=lambda x: x["volume_significance_score"], reverse=True)
-        
-        print(f"Successfully fetched volume estimation data for {len(formatted_data)} coins using public API")
-        return formatted_data[:20]  # Return top 20 most significant volume changes
-            
+        logging.info(f"Successfully fetched volume estimation data for {len(formatted_data)} coins using public API")
+        return formatted_data[:20]
     except Exception as e:
-        print(f"Error fetching volume estimation data: {e}")
+        logging.error(f"Error fetching volume estimation data: {e}")
         return []
 
 def get_coingecko_1h_data():
@@ -237,20 +230,20 @@ def get_coingecko_1h_data():
                         "volume_significance_score": volume_significance
                     })
                 except Exception as e:
-                    print(f"Error processing CoinGecko volume data for {coin.get('symbol', 'unknown')}: {e}")
+                    logging.warning(f"Error processing CoinGecko volume data for {coin.get('symbol', 'unknown')}: {e}")
                     continue
             
             # Sort by volume significance score
             formatted_data.sort(key=lambda x: x["volume_significance_score"], reverse=True)
             
-            print(f"Successfully fetched CoinGecko volume backup data for {len(formatted_data)} coins")
+            logging.info(f"Successfully fetched CoinGecko volume backup data for {len(formatted_data)} coins")
             return formatted_data[:20]
             
         else:
-            print(f"CoinGecko API Error: {response.status_code}")
+            logging.error(f"CoinGecko API Error: {response.status_code}")
             return []
     except Exception as e:
-        print(f"Error fetching CoinGecko volume data: {e}")
+        logging.error(f"Error fetching CoinGecko volume data: {e}")
         return []
 
 def calculate_interval_changes(current_prices):
@@ -347,7 +340,7 @@ def get_crypto_data():
         crypto_data = calculate_interval_changes(current_prices)
         
         if not crypto_data:
-            print(f"No crypto data available - {len(current_prices)} current prices, total symbols with history: {len(price_history)}")
+            logging.warning(f"No crypto data available - {len(current_prices)} current prices, total symbols with history: {len(price_history)}")
             return None
         
         # Separate gainers and losers
@@ -380,7 +373,7 @@ def get_crypto_data():
         return result
         
     except Exception as e:
-        print(f"Error in get_crypto_data: {e}")
+        logging.error(f"Error in get_crypto_data: {e}")
         return None
 
 @app.route('/api/banner-1h')
@@ -403,10 +396,13 @@ def banner_1h():
 @app.route('/api/crypto')
 def get_crypto():
     """REST API endpoint for crypto data"""
+    logging.debug("Received request for /api/crypto endpoint")
     data = get_crypto_data()
     if data:
+        logging.debug("Successfully fetched crypto data")
         return jsonify(data)
     else:
+        logging.error("Failed to fetch crypto data")
         return jsonify({"error": "Failed to fetch crypto data"}), 500
 
 # Keep original routes for backward compatibility
@@ -417,6 +413,10 @@ def banner_1h_legacy():
 @app.route('/crypto')
 def get_crypto_legacy():
     return get_crypto()
+
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204  # Return an empty response with status code 204 (No Content)
 
 @socketio.on('connect')
 def handle_connect():
@@ -439,7 +439,7 @@ def background_crypto_updates():
                 socketio.emit('crypto_update', data)
                 print(f"Sent update: {len(data['gainers'])} gainers, {len(data['losers'])} losers, {len(data['banner'])} banner items")
         except Exception as e:
-            print(f"Error in background update: {e}")
+            logging.error(f"Error in background update: {e}")
         
         time.sleep(60)  # Update every 60 seconds (1 minute)
 
@@ -452,7 +452,7 @@ if __name__ == '__main__':
     background_thread.daemon = True
     background_thread.start()
     
-    socketio.run(app, debug=True, host='0.0.0.0', port=5001)
+    socketio.run(app, debug=False, host='0.0.0.0', port=0)
 else:
     # Production mode for Vercel
     # Note: WebSocket background updates won't work in serverless
