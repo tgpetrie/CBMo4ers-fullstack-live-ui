@@ -1,7 +1,6 @@
 {
     "version": 2,
-    "builds": [
-        {
+    "builds": [{
             "src": "backend/app.py",
             "use": "@vercel/python",
             "config": {
@@ -16,8 +15,7 @@
             }
         }
     ],
-    "routes": [
-        {
+    "routes": [{
             "src": "/api/(.*)",
             "dest": "backend/app.py"
         },
@@ -28,11 +26,5 @@
     ],
     "env": {
         "PYTHON_VERSION": "3.9"
-    },
-    "functions": {
-        "backend/app.py": {
-            "runtime": "@vercel/python",
-            "maxDuration": 30
-        }
     }
 }
