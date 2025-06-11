@@ -13,21 +13,21 @@ const StatusBadge = ({ isConnected, lastUpdate }) => (
     <div className="flex items-center gap-3">
       <div className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 ${
         isConnected 
-          ? 'bg-green-500/10 text-green-400 border border-green-500/30 shadow-lg shadow-green-500/10' 
-          : 'bg-red-500/10 text-red-400 border border-red-500/30'
+          ? 'bg-[#FF5E00]/20 text-[#FF5E00] border border-[#FF5E00]/50 shadow-lg shadow-[#FF5E00]/40' 
+          : 'bg-[#FF3B30]/20 text-[#FF3B30] border border-[#FF3B30]/50 shadow-lg shadow-[#FF3B30]/40'
       }`}>
         <div className={`w-2.5 h-2.5 rounded-full ${
-          isConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'
+          isConnected ? 'bg-[#FF5E00] animate-pulse shadow-lg shadow-[#FF5E00]/60' : 'bg-[#FF3B30]'
         }`}></div>
         <span>📡</span>
         {isConnected ? 'LIVE' : 'OFFLINE'}
         {isConnected && (
-          <span className="ml-1 text-xs text-green-300">Public API</span>
+          <span className="ml-1 text-xs text-[#00CFFF]">Public API</span>
         )}
       </div>
-      <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+      <div className="flex items-center gap-2 text-xs font-medium text-[#E0E0E0] tracking-wide">
         <span>🕐</span>
-        Updated {lastUpdate.toLocaleTimeString()}
+        UPDATED {lastUpdate.toLocaleTimeString()}
       </div>
     </div>
   </div>
@@ -35,14 +35,14 @@ const StatusBadge = ({ isConnected, lastUpdate }) => (
 
 const ContinuousScrollingBanner = ({ data }) => {
   return (
-    <div className="overflow-hidden border shadow-xl bg-gradient-to-r from-gray-900/80 via-gray-800/60 to-gray-900/80 backdrop-blur-xl rounded-2xl border-gray-700/50 shadow-black/10">
-      <div className="px-6 py-4 border-b bg-gray-800/40 border-gray-700/50">
+    <div className="overflow-hidden border shadow-xl bg-black/95 backdrop-blur-xl rounded-2xl border-[#FF5E00]/30 shadow-[#FF5E00]/20 hover:shadow-[#FF5E00]/40 transition-all duration-300">
+      <div className="px-6 py-4 border-b bg-gradient-to-r from-[#FF5E00]/10 to-[#FF3F7F]/10 border-[#FF5E00]/30">
         <div className="flex items-center gap-3">
           <span className="text-xl">🔥</span>
-          <h3 className="text-base font-bold tracking-wide text-white uppercase">
+          <h3 className="text-base font-bold tracking-wide text-[#E0E0E0] uppercase">
             Volume Surge Alert • Live Market Feed
           </h3>
-          <div className="px-2 py-1 text-xs font-bold text-blue-300 bg-blue-500/20 border border-blue-500/30 rounded-full">
+          <div className="px-2 py-1 text-xs font-bold text-[#00CFFF] bg-[#00CFFF]/20 border border-[#00CFFF]/30 rounded-full shadow-lg shadow-[#00CFFF]/20">
             No API Key Required
           </div>
         </div>
@@ -56,22 +56,22 @@ const ContinuousScrollingBanner = ({ data }) => {
                 <a 
                   href={`https://www.coinbase.com/price/${coin.symbol.split('-')[0].toLowerCase()}`} 
                   target="_blank"
-                  className="flex items-center gap-4 transition-transform duration-200 hover:scale-105"
+                  className="flex items-center gap-4 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#FF5E00]/30 rounded-lg px-2 py-1"
                 >
-                  <div className="text-sm font-bold text-gray-200">
+                  <div className="text-sm font-bold text-[#E0E0E0] tracking-wide">
                     {coin.symbol}
                   </div>
                   <div className="font-mono text-sm text-white">
                     {formatCurrency(coin.current)}
                   </div>
                   <div className={`flex items-center gap-1 text-sm font-bold ${
-                    (coin.volume_change || 0) >= 0 ? 'text-blue-400' : 'text-orange-400'
+                    (coin.volume_change || 0) >= 0 ? 'text-[#00CFFF]' : 'text-[#FF5E00]'
                   }`}>
                     <span>{(coin.volume_change || 0) >= 0 ? '🔥' : '❄️'}</span>
                     Vol: {(coin.volume_change || 0) >= 0 ? '+' : ''}{formatDecimal(Math.abs(coin.volume_change || 0))}%
                   </div>
                   <div className={`text-xs ${
-                    coin.gain >= 0 ? 'text-green-400' : 'text-red-400'
+                    coin.gain >= 0 ? 'text-[#FF3F7F]' : 'text-[#FF3B30]'
                   }`}>
                     Price: {coin.gain >= 0 ? '+' : ''}{formatDecimal(coin.gain)}%
                   </div>
@@ -84,22 +84,22 @@ const ContinuousScrollingBanner = ({ data }) => {
                 <a 
                   href={`https://www.coinbase.com/price/${coin.symbol.split('-')[0].toLowerCase()}`} 
                   target="_blank"
-                  className="flex items-center gap-4 transition-transform duration-200 hover:scale-105"
+                  className="flex items-center gap-4 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#FF5E00]/30 rounded-lg px-2 py-1"
                 >
-                  <div className="text-sm font-bold text-gray-200">
+                  <div className="text-sm font-bold text-[#E0E0E0] tracking-wide">
                     {coin.symbol}
                   </div>
                   <div className="font-mono text-sm text-white">
                     {formatCurrency(coin.current)}
                   </div>
                   <div className={`flex items-center gap-1 text-sm font-bold ${
-                    (coin.volume_change || 0) >= 0 ? 'text-blue-400' : 'text-orange-400'
+                    (coin.volume_change || 0) >= 0 ? 'text-[#00CFFF]' : 'text-[#FF5E00]'
                   }`}>
                     <span>{(coin.volume_change || 0) >= 0 ? '🔥' : '❄️'}</span>
                     Vol: {(coin.volume_change || 0) >= 0 ? '+' : ''}{formatDecimal(Math.abs(coin.volume_change || 0))}%
                   </div>
                   <div className={`text-xs ${
-                    coin.gain >= 0 ? 'text-green-400' : 'text-red-400'
+                    coin.gain >= 0 ? 'text-[#FF3F7F]' : 'text-[#FF3B30]'
                   }`}>
                     Price: {coin.gain >= 0 ? '+' : ''}{formatDecimal(coin.gain)}%
                   </div>
@@ -114,31 +114,31 @@ const ContinuousScrollingBanner = ({ data }) => {
 };
 
 const CryptoRow = ({ coin, index }) => (
-  <tr className="transition-all duration-200 group hover:bg-gray-800/30">
+  <tr className="transition-all duration-300 group hover:bg-[#FF5E00]/10 hover:shadow-lg hover:shadow-[#FF5E00]/20">
     <td className="py-5 pl-6 pr-4">
       <div className="flex items-center gap-4">
-        <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-white rounded-full shadow-sm bg-gradient-to-br from-gray-600 to-gray-700">
+        <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-black rounded-full shadow-lg bg-gradient-to-br from-[#FF5E00] to-[#FF3F7F]">
           {index + 1}
         </div>
         <a 
           href={`https://www.coinbase.com/price/${coin.symbol.split('-')[0].toLowerCase()}`} 
           target="_blank"
-          className="font-semibold text-blue-400 transition-colors hover:text-blue-300 group-hover:underline"
+          className="font-bold text-[#00CFFF] transition-all duration-300 hover:text-[#FF3F7F] hover:shadow-lg hover:shadow-[#00CFFF]/30 group-hover:underline tracking-wide"
         >
           {coin.symbol}
         </a>
       </div>
     </td>
     <td className="px-4 py-5 text-right">
-      <div className="font-mono text-base font-semibold text-white">
+      <div className="font-mono text-base font-bold text-[#E0E0E0]">
         {formatCurrency(coin.current)}
       </div>
     </td>
     <td className="py-5 pl-4 pr-6 text-right">
-      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-200 ${
+      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-300 shadow-lg ${
         coin.gain >= 0 
-          ? 'bg-green-500/15 text-green-400 border border-green-500/30' 
-          : 'bg-red-500/15 text-red-400 border border-red-500/30'
+          ? 'bg-[#FF3F7F]/20 text-[#FF3F7F] border border-[#FF3F7F]/40 shadow-[#FF3F7F]/20 hover:shadow-[#FF3F7F]/40' 
+          : 'bg-[#FF3B30]/20 text-[#FF3B30] border border-[#FF3B30]/40 shadow-[#FF3B30]/20 hover:shadow-[#FF3B30]/40'
       }`}>
         <span>{coin.gain >= 0 ? '📈' : '📉'}</span>
         {formatDecimal(Math.abs(coin.gain))}%
@@ -148,10 +148,10 @@ const CryptoRow = ({ coin, index }) => (
 );
 
 const CryptoTable = ({ title, data, variant = "default" }) => (
-  <div className="overflow-hidden border shadow-2xl bg-gray-900/60 backdrop-blur-xl rounded-2xl border-gray-700/50 shadow-black/20">
-    <div className={`px-6 py-5 border-b border-gray-700/50 ${
-      variant === "gainers" ? "bg-gradient-to-r from-green-500/10 to-transparent" : 
-      variant === "losers" ? "bg-gradient-to-r from-red-500/10 to-transparent" : "bg-gray-800/30"
+  <div className="overflow-hidden border shadow-2xl bg-black/90 backdrop-blur-xl rounded-2xl border-[#FF5E00]/30 shadow-[#FF5E00]/20 hover:shadow-[#FF5E00]/40 transition-all duration-300">
+    <div className={`px-6 py-5 border-b border-[#FF5E00]/20 ${
+      variant === "gainers" ? "bg-gradient-to-r from-[#FF3F7F]/20 to-transparent" : 
+      variant === "losers" ? "bg-gradient-to-r from-[#FF3B30]/20 to-transparent" : "bg-[#FF5E00]/10"
     }`}>
       <div className="flex items-center gap-3">
         <span className="text-2xl">
@@ -159,28 +159,28 @@ const CryptoTable = ({ title, data, variant = "default" }) => (
           {variant === "losers" && '📉'}
         </span>
         <div>
-          <h2 className="text-xl font-bold text-white">{title}</h2>
-          <p className="text-sm text-gray-400 mt-0.5">3-minute performance rankings</p>
+          <h2 className="text-xl font-bold text-[#E0E0E0] tracking-wide uppercase">{title}</h2>
+          <p className="text-sm text-[#00CFFF] mt-0.5 tracking-wide">3-MINUTE PERFORMANCE RANKINGS</p>
         </div>
       </div>
     </div>
     
     <div className="overflow-x-auto">
       <table className="w-full">
-        <thead className="bg-gray-800/30">
+        <thead className="bg-black/50">
           <tr>
-            <th className="py-4 pl-6 pr-4 text-xs font-bold tracking-wider text-left text-gray-300 uppercase">
+            <th className="py-4 pl-6 pr-4 text-xs font-bold tracking-wider text-left text-[#00CFFF] uppercase">
               Asset
             </th>
-            <th className="px-4 py-4 text-xs font-bold tracking-wider text-right text-gray-300 uppercase">
+            <th className="px-4 py-4 text-xs font-bold tracking-wider text-right text-[#00CFFF] uppercase">
               Price
             </th>
-            <th className="py-4 pl-4 pr-6 text-xs font-bold tracking-wider text-right text-gray-300 uppercase">
+            <th className="py-4 pl-4 pr-6 text-xs font-bold tracking-wider text-right text-[#00CFFF] uppercase">
               3min Change
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-700/30">
+        <tbody className="divide-y divide-[#FF5E00]/20">
           {data.map((coin, index) => 
             <CryptoRow key={coin.symbol} coin={coin} index={index} />
           )}
@@ -191,11 +191,11 @@ const CryptoTable = ({ title, data, variant = "default" }) => (
 );
 
 const TopMoversBar = ({ data }) => (
-  <div className="overflow-hidden border shadow-xl bg-gradient-to-r from-gray-900/80 via-gray-800/60 to-gray-900/80 backdrop-blur-xl rounded-2xl border-gray-700/50 shadow-black/10">
-    <div className="px-6 py-4 border-b bg-gray-800/40 border-gray-700/50">
+  <div className="overflow-hidden border shadow-xl bg-black/95 backdrop-blur-xl rounded-2xl border-[#FF5E00]/30 shadow-[#FF5E00]/20 hover:shadow-[#FF5E00]/40 transition-all duration-300">
+    <div className="px-6 py-4 border-b bg-gradient-to-r from-[#FF5E00]/10 to-[#FF3F7F]/10 border-[#FF5E00]/30">
       <div className="flex items-center gap-3">
         <span className="text-xl">🌐</span>
-        <h3 className="text-base font-bold tracking-wide text-white uppercase">
+        <h3 className="text-base font-bold tracking-wide text-[#E0E0E0] uppercase">
           Most Active 3min
         </h3>
       </div>
@@ -209,16 +209,16 @@ const TopMoversBar = ({ data }) => (
             target="_blank"
             className="flex-shrink-0 transition-all duration-300 group hover:scale-105 hover:-translate-y-1"
           >
-            <div className={`px-5 py-4 rounded-xl border-2 transition-all duration-300 backdrop-blur-sm ${
+            <div className={`px-5 py-4 rounded-xl border-2 transition-all duration-300 backdrop-blur-sm shadow-lg ${
               coin.gain >= 0 
-                ? 'bg-green-500/10 border-green-500/30 hover:bg-green-500/20 shadow-lg shadow-green-500/10' 
-                : 'bg-red-500/10 border-red-500/30 hover:bg-red-500/20 shadow-lg shadow-red-500/10'
+                ? 'bg-[#FF3F7F]/20 border-[#FF3F7F]/40 hover:bg-[#FF3F7F]/30 shadow-[#FF3F7F]/20 hover:shadow-[#FF3F7F]/40' 
+                : 'bg-[#FF3B30]/20 border-[#FF3B30]/40 hover:bg-[#FF3B30]/30 shadow-[#FF3B30]/20 hover:shadow-[#FF3B30]/40'
             }`}>
-              <div className="mb-2 text-xs font-bold tracking-wide text-gray-200">
+              <div className="mb-2 text-xs font-bold tracking-wide text-[#E0E0E0]">
                 {coin.symbol}
               </div>
               <div className={`text-lg font-bold flex items-center gap-1 ${
-                coin.gain >= 0 ? 'text-green-400' : 'text-red-400'
+                coin.gain >= 0 ? 'text-[#FF3F7F]' : 'text-[#FF3B30]'
               }`}>
                 <span>{coin.gain >= 0 ? '📈' : '📉'}</span>
                 {coin.gain >= 0 ? '+' : ''}{formatDecimal(coin.gain)}%
@@ -269,19 +269,19 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black">
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b shadow-xl bg-gray-900/90 backdrop-blur-xl border-gray-700/50 shadow-black/20">
+      <header className="sticky top-0 z-50 border-b shadow-xl bg-black/95 backdrop-blur-xl border-gray-800/50 shadow-black/40">
         <div className="px-6 py-6 mx-auto max-w-7xl">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white">
-                CBMo4ers
-                <span className="ml-3 text-transparent bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text">
-                  Crypto Dashboard
+              <h1 className="text-3xl font-bold tracking-wide text-white">
+                CBMO4ERS
+                <span className="ml-3 text-transparent bg-gradient-to-r from-[#FF5E00] to-[#00CFFF] bg-clip-text font-bold">
+                  CRYPTO DASHBOARD
                 </span>
               </h1>
-              <p className="mt-2 text-sm font-medium text-gray-400">Real-time cryptocurrency market data from Coinbase</p>
+              <p className="mt-2 text-sm font-medium text-[#E0E0E0] tracking-wide">REAL-TIME CRYPTOCURRENCY MARKET DATA</p>
             </div>
             <StatusBadge isConnected={isConnected} lastUpdate={lastUpdate} />
           </div>
@@ -314,12 +314,12 @@ export default function App() {
           <ContinuousScrollingBanner data={bannerData} />
         </section>
 
-        <footer className="py-10 mt-16 text-center border-t border-gray-700/50">
+        <footer className="py-10 mt-16 text-center border-t border-[#FF5E00]/30">
           <div className="space-y-3">
-            <p className="text-sm font-medium text-gray-400">
-              Powered by <span className="font-semibold text-blue-400">Public Coinbase API</span> • Real-time WebSocket Updates • No Authentication Required
+            <p className="text-sm font-medium text-[#E0E0E0] tracking-wide">
+              Powered by <span className="font-bold text-[#00CFFF]">Public Coinbase API</span> • Real-time WebSocket Updates • No Authentication Required
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-[#FF5E00]">
               Data updates every 60 seconds • Volume surge detection via price volatility correlation • This is not financial advice
             </p>
           </div>
