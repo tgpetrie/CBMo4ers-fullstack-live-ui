@@ -30,7 +30,8 @@ def update_data_loop():
     while True:
         try:
             prices = get_current_prices(PRODUCTS)
-            changes = calculate_interval_changes(prices)
+            # Calculate 5-minute price changes for gainers/losers
+            changes = calculate_interval_changes(prices, interval=300)  # 300 seconds = 5 minutes
             volume_changes = get_1h_volume_weighted_data(PRODUCTS)
 
             latest_gainers = format_crypto_data(changes)
@@ -38,7 +39,8 @@ def update_data_loop():
                 {"product": k, "percent_change": v} for k, v in volume_changes.items()
             ])
 
-            print("[✓] Updated:", latest_gainers[:3], latest_banner[:3])
+            print(f"[✓] Updated - Top gainers (5min): {latest_gainers[:3]}")
+            print(f"[✓] Volume leaders: {latest_banner[:3]}")
         except Exception as e:
             print("[✗] Background update error:", e)
         time.sleep(30)  # every 30 seconds

@@ -196,8 +196,8 @@ export default function App() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {renderTable("🚀 Top BHABIT Price Gainers", gainers, "text-glow-cyan")}
-          {renderTable("📉 Top BHABIT Price Losers", losers, "text-glow-red")}
+          {renderTable("🚀 Top 5-Min Price Gainers", gainers, "text-glow-cyan")}
+          {renderTable("📉 Top 5-Min Price Losers", losers, "text-glow-red")}
           {renderTable("🔥 Volume Surge Leaders", bannerData, "text-glow-purple")}
           {renderTable("⭐ 24h Market Champions", top24h, "text-glow-orange")}
         </div>

@@ -14,7 +14,8 @@ def get_current_prices(products: List[str]) -> Dict[str, float]:
             prices[product] = float(response.json().get("price", 0))
     return prices
 
-def calculate_interval_changes(product_prices: Dict[str, float], interval: int = 180) -> Dict[str, float]:
+def calculate_interval_changes(product_prices: Dict[str, float], interval: int = 300) -> Dict[str, float]:
+    """Calculate percentage changes over specified interval (default: 5 minutes = 300 seconds)"""
     global price_history
     now = time.time()
     changes = {}
@@ -34,9 +35,9 @@ def calculate_interval_changes(product_prices: Dict[str, float], interval: int =
         else:
             changes[product] = 0.0
 
-        # Debug logs
-        print(f"[DEBUG] {product} price history: {price_history[product]}")
-        print(f"[DEBUG] {product} percent change: {changes[product]}")
+        # Debug logs - only show if we have enough data points
+        if len(price_history[product]) > 1:
+            print(f"[DEBUG] {product} - 5min change: {changes[product]}% (from ${oldest_price:.4f} to ${price:.4f})")
 
     return changes
 
