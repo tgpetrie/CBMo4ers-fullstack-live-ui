@@ -34,6 +34,10 @@ def calculate_interval_changes(product_prices: Dict[str, float], interval: int =
         else:
             changes[product] = 0.0
 
+        # Debug logs
+        print(f"[DEBUG] {product} price history: {price_history[product]}")
+        print(f"[DEBUG] {product} percent change: {changes[product]}")
+
     return changes
 
 # --- Volume Tracking ---
