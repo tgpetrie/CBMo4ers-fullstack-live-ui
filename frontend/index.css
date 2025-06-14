@@ -30,34 +30,6 @@
   }
 }
 
-/* BHABIT Logo Background Animation */
-@keyframes logo-pulse {
-  0%, 100% {
-    opacity: 0.03;
-    transform: rotate(12deg) scale(1.4);
-  }
-  50% {
-    opacity: 0.08;
-    transform: rotate(15deg) scale(1.5);
-  }
-}
-
-@keyframes logo-float {
-  0%, 100% {
-    transform: rotate(12deg) scale(1.5) translateY(0px);
-  }
-  33% {
-    transform: rotate(10deg) scale(1.45) translateY(-10px);
-  }
-  66% {
-    transform: rotate(14deg) scale(1.55) translateY(5px);
-  }
-}
-
-.bhabit-logo-bg {
-  animation: logo-float 20s ease-in-out infinite, logo-pulse 8s ease-in-out infinite;
-}
-
 .animate-scroll {
   animation: scroll 25s linear infinite;
 }

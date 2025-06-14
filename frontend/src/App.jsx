@@ -157,76 +157,8 @@ export default function App() {
   );
 
   return (
-    <div className="p-6 space-y-10 text-white font-mono bg-black min-h-screen relative overflow-hidden">
-      {/* BHABIT Logo Background */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
-        <div className="w-96 h-96 bhabit-logo-bg bhabit-logo-glow">
-          <svg width="100%" height="100%" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Cyberpunk Rabbit - Based on your BHABIT logo */}
-            <g>
-              {/* Main rabbit body outline */}
-              <path d="M180 140C180 140 200 100 240 110C280 100 300 140 300 140L320 160C340 180 360 220 350 270C340 320 300 360 256 370C212 360 172 320 162 270C152 220 172 180 192 160L180 140Z" 
-                    fill="none" stroke="#9C3391" strokeWidth="3" strokeOpacity="0.15"/>
-              
-              {/* Large ears - distinctive BHABIT feature */}
-              <path d="M200 140L180 70C175 50 190 30 210 35C230 40 240 70 235 110" 
-                    fill="none" stroke="#FF3F7F" strokeWidth="4" strokeOpacity="0.12"/>
-              <path d="M280 140L300 70C305 50 290 30 270 35C250 40 240 70 245 110" 
-                    fill="none" stroke="#FF3F7F" strokeWidth="4" strokeOpacity="0.12"/>
-              
-              {/* Inner ear geometric lines */}
-              <path d="M210 120L215 80L230 95L225 125" 
-                    fill="none" stroke="#9C3391" strokeWidth="2" strokeOpacity="0.1"/>
-              <path d="M270 120L265 80L250 95L255 125" 
-                    fill="none" stroke="#9C3391" strokeWidth="2" strokeOpacity="0.1"/>
-              
-              {/* Glowing orange eyes - key BHABIT feature */}
-              <circle cx="220" cy="190" r="8" fill="#FF5E00" fillOpacity="0.2"/>
-              <circle cx="260" cy="190" r="8" fill="#FF5E00" fillOpacity="0.2"/>
-              <circle cx="220" cy="190" r="4" fill="#FF5E00" fillOpacity="0.4"/>
-              <circle cx="260" cy="190" r="4" fill="#FF5E00" fillOpacity="0.4"/>
-              <circle cx="220" cy="190" r="2" fill="#FF5E00" fillOpacity="0.8"/>
-              <circle cx="260" cy="190" r="2" fill="#FF5E00" fillOpacity="0.8"/>
-              
-              {/* Nose/muzzle area */}
-              <ellipse cx="240" cy="220" rx="12" ry="8" fill="none" stroke="#FF3F7F" strokeWidth="2" strokeOpacity="0.1"/>
-              
-              {/* Cyberpunk tech lines across face/body */}
-              <path d="M170 200L200 210L240 205L280 210L310 200" 
-                    fill="none" stroke="#00CFFF" strokeWidth="2" strokeOpacity="0.08"/>
-              <path d="M180 240L220 250L260 250L300 240" 
-                    fill="none" stroke="#9C3391" strokeWidth="2" strokeOpacity="0.08"/>
-              <path d="M190 280L230 290L250 285L290 280" 
-                    fill="none" stroke="#FF3F7F" strokeWidth="1" strokeOpacity="0.06"/>
-              
-              {/* Geometric patterns on body */}
-              <polygon points="200,300 220,320 200,340 180,320" 
-                       fill="none" stroke="#FF3F7F" strokeWidth="1" strokeOpacity="0.06"/>
-              <polygon points="280,300 260,320 280,340 300,320" 
-                       fill="none" stroke="#FF3F7F" strokeWidth="1" strokeOpacity="0.06"/>
-              
-              {/* Additional cyberpunk details */}
-              <circle cx="180" cy="170" r="3" fill="#00CFFF" fillOpacity="0.08"/>
-              <circle cx="300" cy="170" r="3" fill="#00CFFF" fillOpacity="0.08"/>
-              <line x1="180" y1="170" x2="190" y2="180" stroke="#00CFFF" strokeWidth="1" strokeOpacity="0.06"/>
-              <line x1="300" y1="170" x2="290" y2="180" stroke="#00CFFF" strokeWidth="1" strokeOpacity="0.06"/>
-              
-              {/* Whiskers */}
-              <line x1="190" y1="220" x2="160" y2="215" stroke="#E0E0E0" strokeWidth="1" strokeOpacity="0.05"/>
-              <line x1="190" y1="230" x2="160" y2="235" stroke="#E0E0E0" strokeWidth="1" strokeOpacity="0.05"/>
-              <line x1="290" y1="220" x2="320" y2="215" stroke="#E0E0E0" strokeWidth="1" strokeOpacity="0.05"/>
-              <line x1="290" y1="230" x2="320" y2="235" stroke="#E0E0E0" strokeWidth="1" strokeOpacity="0.05"/>
-              
-              {/* Subtle body shading */}
-              <ellipse cx="240" cy="280" rx="40" ry="60" fill="#9C3391" fillOpacity="0.03"/>
-            </g>
-          </svg>
-        </div>
-      </div>
-
-      {/* Content layer */}
-      <div className="relative z-10">
-        <StatusBadge isConnected={isConnected} lastUpdate={lastUpdate} />
+    <div className="p-6 space-y-10 text-white font-mono bg-black min-h-screen">
+      <StatusBadge isConnected={isConnected} lastUpdate={lastUpdate} />
         
         {/* Enhanced Horizontal Scrolling Banner */}
         <div className="bhabit-banner relative overflow-hidden rounded-xl shadow-lg">
@@ -269,7 +201,6 @@ export default function App() {
           {renderTable("🔥 Volume Surge Leaders", bannerData, "text-glow-purple")}
           {renderTable("⭐ 24h Market Champions", top24h, "text-glow-orange")}
         </div>
-      </div>
     </div>
   );
 }
