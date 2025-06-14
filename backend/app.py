@@ -1,11 +1,3 @@
-import eventlet
-# Ensure monkey patching is done before other imports
-eventlet.monkey_patch()
-
-import eventlet.hubs
-# Force eventlet to use the poll hub instead of kqueue (macOS compatibility issue)
-eventlet.hubs.use_hub('poll')
-
 from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
@@ -14,6 +6,14 @@ import time
 import threading
 from collections import defaultdict, deque
 import logging
+from app.utils import (
+    get_current_prices,
+    calculate_interval_changes,
+    price_history,
+    get_1h_volume_weighted_data,
+    format_crypto_data,
+    format_banner_data
+)
 
 # CBMo4ers Crypto Dashboard Backend
 # Data Sources: Public Coinbase Exchange API + CoinGecko (backup)
@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 app = Flask(__name__)
 app.app_context().push()  # Ensure application context is set
 app.config['SECRET_KEY'] = 'crypto-dashboard-secret'
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # Enable CORS for the Flask app
 CORS(app)
@@ -43,9 +43,7 @@ price_history = defaultdict(lambda: deque(maxlen=20))  # Keep last 20 data point
 INTERVAL_MINUTES = 3  # Calculate changes over 3 minutes
 
 def get_current_prices():
-    """Fetch current prices from Coinbase with CoinGecko fallback"""
     try:
-        # Primary: Try Coinbase first
         return get_coinbase_prices()
     except Exception as e:
         logging.error(f"Coinbase API failed: {e}, trying CoinGecko backup...")
@@ -58,7 +56,16 @@ def get_coinbase_prices():
         products_response = requests.get(products_url, timeout=10)
         if products_response.status_code == 200:
             products = products_response.json()
-            return products
+            current_prices = {}
+            for product in products:
+                # Construct a symbol and fetch its price from the ticker endpoint
+                symbol = f"{product['base_currency']}-{product['quote_currency']}"
+                ticker_url = f"https://api.exchange.coinbase.com/products/{product['id']}/ticker"
+                ticker_response = requests.get(ticker_url, timeout=5)
+                if ticker_response.status_code == 200:
+                    ticker_data = ticker_response.json()
+                    current_prices[symbol] = float(ticker_data.get('price', 0))
+            return current_prices
         else:
             logging.error(f"Products API Error: {products_response.status_code}")
             return {}
@@ -69,7 +76,6 @@ def get_coinbase_prices():
 def get_coingecko_prices():
     """Fetch current prices from CoinGecko as backup"""
     try:
-        # Get top 50 coins by market cap
         url = "https://api.coingecko.com/api/v3/coins/markets"
         params = {
             'vs_currency': 'usd',
@@ -83,14 +89,9 @@ def get_coingecko_prices():
         if response.status_code == 200:
             coins = response.json()
             current_prices = {}
-            
-            # Convert CoinGecko format to Coinbase-like format
             for coin in coins:
-                # Create a symbol like "BTC-USD" from CoinGecko data
                 symbol = f"{coin['symbol'].upper()}-USD"
                 current_prices[symbol] = float(coin['current_price'])
-            
-            logging.info(f"Successfully fetched {len(current_prices)} prices from CoinGecko backup")
             return current_prices
         else:
             logging.error(f"CoinGecko API Error: {response.status_code}")
@@ -333,6 +334,7 @@ def get_crypto_data():
     try:
         # Get current prices
         current_prices = get_current_prices()
+        logging.debug(f"Current prices type: {type(current_prices)}, content: {current_prices}")
         if not current_prices:
             return None
             
